@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <wchar.h>
+#include <locale.h>
 #include "linkedList.h"
 
 int listLength(listaDesCartas* li) {
@@ -31,8 +33,9 @@ void append(listaDesCartas* li, int elem) {
 
 void printList(listaDesCartas* li) {
     node* p = li->head;
+    wchar_t spade = 0x1f0a2;
     while (p != NULL) {
-        printf("%3d |", p->val);
+        wprintf(L"%3d%lc",p->val ,spade);
         p = p->next;
     }
 }

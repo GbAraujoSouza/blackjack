@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <wchar.h>
+#include <locale.h>
 #include "linkedList.h"
 
 
@@ -32,9 +34,10 @@ int main() {
     }
 
     for (int i = 0, j = 1; i < qntJogadores; i++, j++) {
-        printf("Jogador %d: ", j);
+        setlocale(LC_CTYPE, "");
+        wprintf(L"Jogador %i: ", j);
+        fflush(stdout);
         printList(&jogadores[i].cartas);
-        puts("");
     }
 
 
