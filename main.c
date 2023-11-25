@@ -3,8 +3,6 @@
 #include <time.h>
 #include "linkedList.h"
 
-
-
 typedef struct {
     char nome[100];
     listaDesCartas cartas;
