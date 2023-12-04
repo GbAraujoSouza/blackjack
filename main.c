@@ -55,7 +55,23 @@ int main() {
         append(&jogadores[i].cartas, rand() % 11 + 1);
     }
 
-    printJogadores(jogadores, qntJogadores);
+    bool gameOver = false;
+    while(!gameOver) {
+
+        // oferecer carta para cada jogador
+
+        // ordenar jogadores
+
+        // display jogadores (printJogadores)
+
+        // verificar se algum jogador esta fora, se sim remove-lo do jogo
+    }
+
+    // exibir estado final da partida
+    
+    // registrar partida em arquivo
+
+    // perguntar se quer jogar novamente
 
     return 0;
 }
