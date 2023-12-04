@@ -32,6 +32,11 @@ int main() {
     int qntJogadores;
     printf("Numero de Jogadores ");
     scanf("%d", &qntJogadores);
+    while (qntJogadores < 2) {
+        puts("Mínimo de 2 jogadores!");
+        printf("Numero de Jogadores ");
+        scanf("%d", &qntJogadores);
+    }
 
     jogador* jogadores = (jogador*)malloc(qntJogadores * sizeof(jogador));
     if (!jogadores) {
