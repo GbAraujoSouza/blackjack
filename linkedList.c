@@ -26,6 +26,7 @@ void append(pilhaDeCarta* li, char elem) {
         li->tail = li->head;
     } else {
         li->tail->next = new;
+        li->tail = new;
     }
 }
 
