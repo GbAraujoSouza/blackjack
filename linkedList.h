@@ -1,17 +1,19 @@
 typedef struct aux {
-    int val;
+    char val;
     struct aux* next;
 } node;
 
 typedef struct {
     node* head;
     node* tail;
-} listaDesCartas;
+} pilhaDeCarta;
 
-void append(listaDesCartas* li, int elem);
+void append(pilhaDeCarta* li, char elem);
 
-void initList(listaDesCartas* li);
+void initList(pilhaDeCarta* li);
 
-void printList(listaDesCartas* li);
+void printList(pilhaDeCarta* li);
 
-int listLength(listaDesCartas* li);
+int listLength(pilhaDeCarta* li);
+
+char removeCarta(pilhaDeCarta* li);

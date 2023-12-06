@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "linkedList.h"
 
-int listLength(listaDesCartas* li) {
+int listLength(pilhaDeCarta* li) {
     node* p = li->head;
     int size = 0;
     while (p != NULL) {
@@ -12,12 +12,12 @@ int listLength(listaDesCartas* li) {
     return size;
 }
 
-void initList(listaDesCartas* li) {
+void initList(pilhaDeCarta* li) {
     li->head = NULL;
     li->tail = NULL;
 }
 
-void append(listaDesCartas* li, int elem) {
+void append(pilhaDeCarta* li, char elem) {
     node* new = (node*)malloc(sizeof(node));
     new->val = elem;
     new->next = NULL;
@@ -29,10 +29,23 @@ void append(listaDesCartas* li, int elem) {
     }
 }
 
-void printList(listaDesCartas* li) {
+char removeCarta(pilhaDeCarta* li) {
+    // remover e retornar o ultimo elemento
+    node* p = li->head;
+    // chegar no penultimo elemento
+    while (p->next != li->tail) {
+        p = p->next;
+    }
+    li->tail = p;
+    p = p->next;
+    li->tail->next = NULL;
+    return p->val;
+}
+
+void printList(pilhaDeCarta* li) {
     node* p = li->head;
     while (p != NULL) {
-        printf("%3d |", p->val);
+        printf("%3c |", p->val);
         p = p->next;
     }
 }
