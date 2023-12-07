@@ -15,10 +15,31 @@ typedef struct {
     bool jogando;
 } jogador;
 
+void verificarJogadores(jogador* listaJogadores, int qntJogadores) {
+    // verifica se algum jogador fez mais de 21 pontos e altera seu estado de jogo para false
+
+    for (int i = 0; i < qntJogadores; i++) {
+        if (listaJogadores[i].pontos > 21) {
+            listaJogadores[i].jogando = false;
+        }
+    }
+}
+
 void printJogadores(jogador* listaJogadores, int qntJogadores) {
+    // mostra os jogadores na tela
+    // se o jogador fez mais de 21 pontos, será mostrado seu status de perdedor
+
     for (int j = 0; j < qntJogadores; j++) {
         printf("%s: ", listaJogadores[j].nome);
         printList(listaJogadores[j].cartas);
+        printf("  Pontos --> %d", listaJogadores[j].pontos);
+        // mostrar status de perdedor
+        if (!listaJogadores[j].jogando && listaJogadores[j].pontos > 21) {
+            printf("  [PERDEU]");
+        } else if(!listaJogadores[j].jogando && listaJogadores[j].pontos < 21) {
+            printf("  [PAROU]");
+        }
+
         puts("");
     }
 }
@@ -123,9 +144,16 @@ int main() {
                 getchar();
                 printf("%s quer mais uma carta? [s/n]: ", jogadores[i].nome);
                 scanf("%c", &querNovaCarta);
+                // checar input
+                while (querNovaCarta != 's' && querNovaCarta != 'S' && querNovaCarta != 'n' && querNovaCarta != 'N') {
+                    printf("Responda [s/n]: ");
+                    scanf("%c", &querNovaCarta);
+                }
                 if (querNovaCarta == 's' || querNovaCarta == 'S') {
                     append(jogadores[i].cartas, removeCarta(baralho));
                     atualizarPontuacao(&jogadores[i]);
+                } else {
+                    jogadores[i].jogando = false;
                 }
             }
         }
@@ -134,9 +162,7 @@ int main() {
         jogador aux;
         for(int ult = qntJogadores - 1; ult > 0; ult--) {
             for(int i=0; i < ult; i++) {
-                printf("%d\n", jogadores[i].pontos);
-                printf("%d\n", jogadores[i+1].pontos);
-                if (jogadores[i].pontos < jogadores[i+1].pontos){
+                if (jogadores[i].pontos < jogadores[i+1].pontos) {
                     aux = jogadores[i];
                     jogadores[i] = jogadores [i+1];
                     jogadores[i+1] = aux;
@@ -144,6 +170,9 @@ int main() {
             }
         }
 
+        // verificar se algum jogador esta fora, se sim remove-lo do jogo
+        verificarJogadores(jogadores, qntJogadores);
+        
         // display jogadores (printJogadores)
         printJogadores(jogadores, qntJogadores);
 
