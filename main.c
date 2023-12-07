@@ -25,6 +25,31 @@ void verificarJogadores(jogador* listaJogadores, int qntJogadores) {
     }
 }
 
+bool verificarGameOver(jogador* listaJogadores, int qntJogadores) {
+    // verifica se todos os jogadores saíram, se todos perderam ou se alguém ganhou
+    // retorna true se o jogo acabou
+
+    // verifica ganhador
+    for (int i = 0; i < qntJogadores; i++) {
+        if (listaJogadores[i].pontos == 21) {
+            return true;
+        }
+    }
+
+    // verifica se todos saíram ou perderam
+    int jogadoresRestantes = 0;
+    for (int i = 0; i < qntJogadores; i++) {
+        if (listaJogadores[i].jogando) {
+            jogadoresRestantes++;
+        }
+    }
+    if (jogadoresRestantes == 0){
+        return true;
+    }
+
+    return false;
+}
+
 void printJogadores(jogador* listaJogadores, int qntJogadores) {
     // mostra os jogadores na tela
     // se o jogador fez mais de 21 pontos, será mostrado seu status de perdedor
@@ -177,6 +202,10 @@ int main() {
         printJogadores(jogadores, qntJogadores);
 
         // verificar se todos os jogadores saíram ou se alguém fez 21 -> gameOver
+        if (verificarGameOver(jogadores, qntJogadores)) {
+            gameOver = !gameOver;
+            // displayGanhador();
+        }
     }
 
     // exibir estado final da partida
