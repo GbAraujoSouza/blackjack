@@ -25,6 +25,71 @@ void verificarJogadores(jogador* listaJogadores, int qntJogadores) {
     }
 }
 
+int valorCarta(char carta) {
+    int value;
+    switch (carta) {
+        case 'D':
+        case 'J':
+        case 'Q':
+        case 'K':
+            value = 10;
+            break;
+        case 'A':
+            value = 1;
+            break;
+        default:
+            value = (int)carta - '0';
+            break;
+    }
+    return value;
+}
+
+void atualizarPontuacao(jogador* j) {
+    if (listLength(j->cartas) == 2) {
+        j->pontos += valorCarta(j->cartas->head->val);
+    }
+    j->pontos += valorCarta(j->cartas->tail->val);
+}
+
+void ordenaJogadores(jogador* listaJogadores, int qntJogadores) {
+    // ordena todos os jogadores utilizando o bubble sort
+    // Os jogadores com mais de 21 pontos são jogados para o final do array
+    // para que sejam mostrados por ultimo no terminal
+    
+    jogador aux;
+    for(int ult = qntJogadores - 1; ult > 0; ult--) {
+        for (int i=0; i < ult; i++) {
+            if (listaJogadores[i].pontos < listaJogadores[i+1].pontos && listaJogadores[i].pontos > 21) {
+                aux = listaJogadores[i];
+                listaJogadores[i] = listaJogadores[i+1];
+                listaJogadores[i+1] = aux;
+            }
+        }
+    }
+}
+
+void pedeCarta(jogador* listaJogadores, int qntJogadores, pilhaDeCarta* baralho) {
+    for (int i = 0; i < qntJogadores; i++) {
+            if (listaJogadores[i].jogando) {
+                char querNovaCarta;
+                getchar();
+                printf("%s quer mais uma carta? [s/n]: ", listaJogadores[i].nome);
+                scanf("%c", &querNovaCarta);
+                // checar input
+                while (querNovaCarta != 's' && querNovaCarta != 'S' && querNovaCarta != 'n' && querNovaCarta != 'N') {
+                    printf("Responda [s/n]: ");
+                    scanf("%c", &querNovaCarta);
+                }
+                if (querNovaCarta == 's' || querNovaCarta == 'S') {
+                    append(listaJogadores[i].cartas, removeCarta(baralho));
+                    atualizarPontuacao(&listaJogadores[i]);
+                } else {
+                    listaJogadores[i].jogando = false;
+                }
+            }
+        }
+}
+
 bool verificarGameOver(jogador* listaJogadores, int qntJogadores) {
     // verifica se todos os jogadores saíram, se todos perderam ou se alguém ganhou
     // retorna true se o jogo acabou
@@ -92,31 +157,8 @@ pilhaDeCarta* constroiBaralho() {
     return baralho;
 }
 
-int valorCarta(char carta) {
-    int value;
-    switch (carta) {
-        case 'D':
-        case 'J':
-        case 'Q':
-        case 'K':
-            value = 10;
-            break;
-        case 'A':
-            value = 1;
-            break;
-        default:
-            value = (int)carta - '0';
-            break;
-    }
-    return value;
-}
 
-void atualizarPontuacao(jogador* j) {
-    if (listLength(j->cartas) == 2) {
-        j->pontos += valorCarta(j->cartas->head->val);
-    }
-    j->pontos += valorCarta(j->cartas->tail->val);
-}
+
 
 int main() {
 
@@ -162,38 +204,11 @@ int main() {
     printJogadores(jogadores, qntJogadores);
     while(!gameOver) {
 
-        // oferecer carta para cada jogador
-        for (int i = 0; i < qntJogadores; i++) {
-            if (jogadores[i].jogando) {
-                char querNovaCarta;
-                getchar();
-                printf("%s quer mais uma carta? [s/n]: ", jogadores[i].nome);
-                scanf("%c", &querNovaCarta);
-                // checar input
-                while (querNovaCarta != 's' && querNovaCarta != 'S' && querNovaCarta != 'n' && querNovaCarta != 'N') {
-                    printf("Responda [s/n]: ");
-                    scanf("%c", &querNovaCarta);
-                }
-                if (querNovaCarta == 's' || querNovaCarta == 'S') {
-                    append(jogadores[i].cartas, removeCarta(baralho));
-                    atualizarPontuacao(&jogadores[i]);
-                } else {
-                    jogadores[i].jogando = false;
-                }
-            }
-        }
-
         // ordenar jogadores
-        jogador aux;
-        for(int ult = qntJogadores - 1; ult > 0; ult--) {
-            for(int i=0; i < ult; i++) {
-                if (jogadores[i].pontos < jogadores[i+1].pontos) {
-                    aux = jogadores[i];
-                    jogadores[i] = jogadores [i+1];
-                    jogadores[i+1] = aux;
-                }
-            }
-        }
+        ordenaJogadores(jogadores, qntJogadores);
+
+        // oferecer carta para cada jogador
+        pedeCarta(jogadores, qntJogadores, baralho);
 
         // verificar se algum jogador esta fora, se sim remove-lo do jogo
         verificarJogadores(jogadores, qntJogadores);
