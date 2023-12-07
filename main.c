@@ -147,10 +147,7 @@ int main() {
         // display jogadores (printJogadores)
         printJogadores(jogadores, qntJogadores);
 
-        // verificar se algum jogador esta fora, se sim remove-lo do jogo
-        
-
-        // verificar se todos os jogadores sairam ou se alguem fez 21 -> gameOver
+        // verificar se todos os jogadores saíram ou se alguém fez 21 -> gameOver
     }
 
     // exibir estado final da partida
