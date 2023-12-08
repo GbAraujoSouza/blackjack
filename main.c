@@ -313,8 +313,9 @@ void jogarPartida() {
     int qntJogadores;
     printf("Numero de Jogadores ");
     scanf("%d", &qntJogadores);
-    while (qntJogadores < 2) {
-        puts("Mínimo de 2 jogadores!");
+    while (qntJogadores < 2 || qntJogadores > 8) {
+        system("clear");
+        puts("Minimo de 2 e maximo de 8 jogadores!");
         printf("Numero de Jogadores ");
         scanf("%d", &qntJogadores);
     }
@@ -378,27 +379,6 @@ void jogarPartida() {
     }
 }
 
-
-
-
-
-
-
-
-// void pegarUltimoRegistro(){
-//     int pontos, hr, min, seg, dia, mes, ano;
-//     char nome[20];
-//     FILE* f = fopen("log.txt", "r");
-//     if(!f){
-//         printf("Erro ao abrir o arquivo");
-//         exit(1);
-//     }
-//     fseek(f, - 7 * sizeof(int) - 20 * sizeof(char), SEEK_END);
-//     fscanf(f, "%s ", nome);
-//     fscanf(f, "%d %d %d %d %d %d %d", &pontos, &hr, &min, &seg, &dia, &mes, &ano);
-//     printf("Nome - %s Pontuação - %d Hora - %d:%d:%d Data - %d/%d/%d", nome, pontos, hr, min, seg, dia, mes, ano);
-// }
-
 void pegarUltimoRegistro(){
     jReg jr;
     FILE* f = fopen("log.txt", "r");
@@ -407,7 +387,7 @@ void pegarUltimoRegistro(){
         exit(1);
     }
     while(!feof(f)){
-        fscanf(f, "%s", jr.nome);
+        fscanf(f, "%[^\n]", jr.nome);
         fscanf(f, "%d %d %d %d %d %d %d", &jr.pontuacao, &jr.hr, &jr.min, &jr.seg, &jr.dia, &jr.mes, &jr.ano);
     }
     printf("Nome - %s Pontuação - %d Data - %2d/%2d/%2d Hora - %2d:%2d:%2d\n", jr.nome, jr.pontuacao, jr.hr, jr.min, jr.seg, jr.dia, jr.mes, jr.ano);
