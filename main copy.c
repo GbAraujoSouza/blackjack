@@ -1,21 +1,10 @@
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
+#include "linkedList.h"
 
 #define true 1
 #define false 0
-
-typedef struct aux {
-    char val;
-    struct aux* next;
-} node;
-
-typedef struct {
-    node* head;
-    node* tail;
-} pilhaDeCarta;
 
 typedef int bool;
 
@@ -25,70 +14,6 @@ typedef struct {
     int pontos;
     bool jogando;
 } jogador;
-
-typedef struct{
-    char nome[20];
-    int pontuacao;
-    int hr;
-    int min;
-    int seg;
-    int dia;
-    int mes;
-    int ano;
-} jReg;
-
-int listLength(pilhaDeCarta* li) {
-    node* p = li->head;
-    int size = 0;
-    while (p != NULL) {
-        p = p->next;
-        size++;
-    }
-    return size;
-}
-
-void initList(pilhaDeCarta* li) {
-    li->head = NULL;
-    li->tail = NULL;
-}
-
-void append(pilhaDeCarta* li, char elem) {
-    node* new = (node*)malloc(sizeof(node));
-    new->val = elem;
-    new->next = NULL;
-    if (listLength(li) == 0) {
-        li->head = new;
-        li->tail = li->head;
-    } else {
-        li->tail->next = new;
-        li->tail = new;
-    }
-}
-
-char removeCarta(pilhaDeCarta* li) {
-    // remover e retornar o ultimo elemento
-    node* p = li->head;
-    // chegar no penultimo elemento
-    while (p->next != li->tail) {
-        p = p->next;
-    }
-    li->tail = p;
-    p = p->next;
-    li->tail->next = NULL;
-    return p->val;
-}
-
-void printList(pilhaDeCarta* li) {
-    node* p = li->head;
-    while (p != NULL) {
-        printf("%3c |", p->val);
-        p = p->next;
-    }
-}
-
-
-
-
 
 void displayGanhador(jogador* listaJogadores, int qntJogadores) {
 
@@ -264,6 +189,8 @@ bool verificarGameOver(jogador* listaJogadores, int qntJogadores) {
     return false;
 }
 
+
+
 pilhaDeCarta* constroiBaralho() {
     char template[] = { 'A', '2', '3', '4', '5', '6', '7', '8', '9', 'D', 'J', 'Q', 'K' };
     char cartas[52];
@@ -287,27 +214,11 @@ pilhaDeCarta* constroiBaralho() {
     return baralho;
 }
 
-void gravarNoArquivo(jogador j){
-    struct tm* reg_data_hora;
-    time_t segundos;
-    time(&segundos);
-    reg_data_hora = localtime(&segundos);
-    FILE* f = fopen("log.txt", "a");
-    if(!f){
-        printf("Erro ao abrir o arquivo\n");
-        exit(1);
-    }
-    fprintf(f, "%s %d ", j.nome, j.pontos);
-    fprintf(f, "%d %d %d ", reg_data_hora -> tm_mday, reg_data_hora -> tm_mon + 1, reg_data_hora -> tm_year - 100);
-    fprintf(f, "%d %d %d\n", reg_data_hora -> tm_hour - 3, reg_data_hora -> tm_min, reg_data_hora -> tm_sec);
-    fclose(f);
-}
-
 void jogarPartida() {
 
     // Gerador de numero aleatório
     time_t t1;
-    srand ((unsigned) time (&t1));
+    srand ( (unsigned) time (&t1));
 
     // criar jogadores
     int qntJogadores;
@@ -322,7 +233,7 @@ void jogarPartida() {
     jogador* jogadores = (jogador*)malloc(qntJogadores * sizeof(jogador));
     if (!jogadores) {
         puts("Erro de alocação de memoria");
-        return;
+        return -1;
     }
 
     // inicializar baralho
@@ -369,187 +280,4 @@ void jogarPartida() {
         }
 
     }
-    // registrar vencedor
-    int maxPontos = jogadores[0].pontos;
-    for (int i = 0; i < qntJogadores; i++) {
-        if (jogadores[i].pontos == maxPontos) {
-            gravarNoArquivo(jogadores[i]);
-        }
-    }
-}
-
-
-
-
-
-
-
-
-// void pegarUltimoRegistro(){
-//     int pontos, hr, min, seg, dia, mes, ano;
-//     char nome[20];
-//     FILE* f = fopen("log.txt", "r");
-//     if(!f){
-//         printf("Erro ao abrir o arquivo");
-//         exit(1);
-//     }
-//     fseek(f, - 7 * sizeof(int) - 20 * sizeof(char), SEEK_END);
-//     fscanf(f, "%s ", nome);
-//     fscanf(f, "%d %d %d %d %d %d %d", &pontos, &hr, &min, &seg, &dia, &mes, &ano);
-//     printf("Nome - %s Pontuação - %d Hora - %d:%d:%d Data - %d/%d/%d", nome, pontos, hr, min, seg, dia, mes, ano);
-// }
-
-void pegarUltimoRegistro(){
-    jReg jr;
-    FILE* f = fopen("log.txt", "r");
-    if(!f){
-        printf("Erro ao abrir o arquivo\n");
-        exit(1);
-    }
-    while(!feof(f)){
-        fscanf(f, "%s", jr.nome);
-        fscanf(f, "%d %d %d %d %d %d %d", &jr.pontuacao, &jr.hr, &jr.min, &jr.seg, &jr.dia, &jr.mes, &jr.ano);
-    }
-    printf("Nome - %s Pontuação - %d Data - %2d/%2d/%2d Hora - %2d:%2d:%2d\n", jr.nome, jr.pontuacao, jr.hr, jr.min, jr.seg, jr.dia, jr.mes, jr.ano);
-}
-
-void pegarMaiorPontuacao(){
-    jReg maiorReg, auxReg;
-    FILE* f = fopen("log.txt", "r");
-    if(!f){
-        printf("Erro ao abrir o arquivo\n");
-        exit(1);
-    }
-    fscanf(f, "%s", maiorReg.nome);
-    fscanf(f, "%d %d %d %d %d %d %d", &maiorReg.pontuacao, &maiorReg.hr, &maiorReg.min, &maiorReg.seg, &maiorReg.dia, &maiorReg.mes, &maiorReg.ano);
-    while(!feof(f)){
-        fscanf(f, "%s", auxReg.nome);
-        fscanf(f, "%d %d %d %d %d %d %d", &auxReg.pontuacao, &auxReg.hr, &auxReg.min, &auxReg.seg, &auxReg.dia, &auxReg.mes, &auxReg.ano);
-        if(auxReg.pontuacao > maiorReg.pontuacao){
-            strcpy(maiorReg.nome, auxReg.nome);
-            maiorReg.pontuacao = auxReg.pontuacao;
-            maiorReg.hr = auxReg.hr;
-            maiorReg.min = auxReg.min;
-            maiorReg.seg = auxReg.seg;
-            maiorReg.dia = auxReg.dia;
-            maiorReg.mes = auxReg.mes;
-            maiorReg.ano = auxReg.ano;
-        }
-    }
-    printf("Nome - %s Pontuação - %d Data - %2d/%2d/%2d Hora - %2d:%2d:%2d\n", maiorReg.nome, maiorReg.pontuacao, maiorReg.hr, maiorReg.min, maiorReg.seg, maiorReg.dia, maiorReg.mes, maiorReg.ano);
-}
-
-void limparRegistros(){
-    FILE* f = fopen("log.txt", "w");
-    fclose(f);
-}
-
-bool retornarAoLobby();
-
-int main(){
-    int opcao = 0;
-
-    while (opcao != 3) {
-
-        do{
-            system("clear");
-            printf("Olá, seja bem-vindo ao lobby de BlackJack"
-                "\n1. Iniciar uma nova partida"
-                "\n2. Acessas os registros de partidas anteriores."
-                "\n3. Sair do lobby."
-                "\nDigite uma das opcoes anteriores para continuar: ");
-            scanf("%d", &opcao);
-            getchar();
-        }while(opcao !=1 && opcao != 2 && opcao != 3);
-        
-        switch(opcao){
-        case 1:
-            system("clear");
-            jogarPartida();
-            if (retornarAoLobby()) {
-                continue;
-            }
-            opcao = 3;
-            break;
-        case 2:
-           do{
-                system("clear");
-                printf("O que voce deseja acessar?"
-                    "\n1. Acessar a ultima pontuação."
-                    "\n2. Acessar a maior pontuação."
-                    "\n3. Limpar os registros."
-                    "\nDigite uma das opcoes anteriores para continuar: ");
-                scanf("%d", &opcao);
-                getchar();
-            } while(opcao !=1 && opcao != 2 && opcao != 3);
-            switch(opcao){
-                case 1:
-                    pegarUltimoRegistro();
-                    break;
-                case 2:
-                    pegarMaiorPontuacao();
-                    break;
-                case 3:
-                    limparRegistros();
-                    break;
-            }
-            if (retornarAoLobby()) {
-                continue;
-            }
-            opcao = 3;
-        }
-
-    }
-    
-
-    // switch(opcao){
-    //     case 1:
-    //         jogarPartida();
-    //         retornarAoLobby();
-    //         break;
-    //     case 2:
-    //         printf("O quê você deseja acessar?\n");
-    //         printf("1. Acessar a última pontuação\n2. Acessar a maior pontuação\n3. Limpar os registros\n");
-    //         scanf("%d", &opcao);
-    //         getchar();
-    //         switch(opcao){
-    //             case 1:
-    //                 pegarUltimoRegistro();
-    //                 break;
-    //             case 2:
-    //                 pegarMaiorPontuacao();
-    //                 break;
-    //             case 3:
-    //                 limparRegistros();
-    //                 break;
-    //         }
-    //         retornarAoLobby();
-    //         break;
-    //     case 3:
-    //         break;
-    //     default:
-    //         printf("Digite uma opcao válida (main)\n");
-    //         main();
-    // }
-    system("clear");
-    printf("Você deixou o lobby\n");
-    return 0;
-}
-
-bool retornarAoLobby(){
-    char c;
-    getchar();
-    printf("Deseja voltar ao Lobby(s/n): ");
-    scanf("%c", &c);
-    getchar();
-
-    while (tolower(c) != 's' && tolower(c) != 'n')
-    {
-        printf("Digite uma opção válida: ");
-        scanf("%c", &c);
-    }
-    
-    if (tolower(c) == 's')
-        return true;
-    return false;
 }
