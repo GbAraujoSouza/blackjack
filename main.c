@@ -86,10 +86,6 @@ void printList(pilhaDeCarta* li) {
     }
 }
 
-
-
-
-
 void displayGanhador(jogador* listaJogadores, int qntJogadores) {
 
     int qntGanhadores = (listaJogadores[0].pontos) > 21 ? 0 : 1;
@@ -180,7 +176,6 @@ void ordenaJogadores(jogador* listaJogadores, int qntJogadores) {
     // Os jogadores com mais de 21 pontos são jogados para o final do array
     // para que sejam mostrados por ultimo no terminal
 
-    
     jogador aux;
     for(int ult = qntJogadores - 1; ult > 0; ult--) {
         for (int i=0; i < ult; i++) {
@@ -481,37 +476,6 @@ int main(){
         }
 
     }
-    
-
-    // switch(opcao){
-    //     case 1:
-    //         jogarPartida();
-    //         retornarAoLobby();
-    //         break;
-    //     case 2:
-    //         printf("O quê você deseja acessar?\n");
-    //         printf("1. Acessar a última pontuação\n2. Acessar a maior pontuação\n3. Limpar os registros\n");
-    //         scanf("%d", &opcao);
-    //         getchar();
-    //         switch(opcao){
-    //             case 1:
-    //                 pegarUltimoRegistro();
-    //                 break;
-    //             case 2:
-    //                 pegarMaiorPontuacao();
-    //                 break;
-    //             case 3:
-    //                 limparRegistros();
-    //                 break;
-    //         }
-    //         retornarAoLobby();
-    //         break;
-    //     case 3:
-    //         break;
-    //     default:
-    //         printf("Digite uma opcao válida (main)\n");
-    //         main();
-    // }
     system("clear");
     printf("Você deixou o lobby\n");
     return 0;
