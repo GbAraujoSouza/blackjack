@@ -15,6 +15,36 @@ typedef struct {
     bool jogando;
 } jogador;
 
+void displayGanhador(jogador* listaJogadores, int qntJogadores) {
+
+    int qntGanhadores = (listaJogadores[0].pontos) > 21 ? 0 : 1;
+    int pontuacaoMaxima = listaJogadores[0].pontos;
+    int i = 1;
+    while (listaJogadores[i].pontos == pontuacaoMaxima && i < qntJogadores) {
+        qntGanhadores++;
+        i++;
+    }
+
+    // imprimir empate
+    if (qntGanhadores > 1) {
+        printf("##### EMPATE #####\n");
+        printf("Ganhadores: \n");
+        for (int i = 0; i < qntGanhadores; i++) {
+            if (listaJogadores[i].pontos == pontuacaoMaxima) {
+                printf("%s\n", listaJogadores[i].nome);
+            }
+        }
+    } else if (qntGanhadores == 0) { 
+        // todos perderam
+        printf("##### NAO HOUVE VENCEDORES #####\n");
+    } else { 
+        // imprimir vencedor
+        printf("##### VITORIA DE %s #####\n", listaJogadores[0].nome);
+        printf("Pontos: %d\n", listaJogadores[0].pontos);
+    }
+    
+}
+
 void verificarJogadores(jogador* listaJogadores, int qntJogadores) {
     // verifica se algum jogador fez mais de 21 pontos e altera seu estado de jogo para false
 
@@ -51,20 +81,64 @@ void atualizarPontuacao(jogador* j) {
     j->pontos += valorCarta(j->cartas->tail->val);
 }
 
+void printJogadores(jogador* listaJogadores, int qntJogadores) {
+    // mostra os jogadores na tela
+    // se o jogador fez mais de 21 pontos, será mostrado seu status de perdedor
+
+    for (int j = 0; j < qntJogadores; j++) {
+        printf("%s: ", listaJogadores[j].nome);
+        printList(listaJogadores[j].cartas);
+        printf("  Pontos --> %d", listaJogadores[j].pontos);
+        // mostrar status de perdedor
+        if (!listaJogadores[j].jogando && listaJogadores[j].pontos > 21) {
+            printf("  [PERDEU]");
+        } else if(!listaJogadores[j].jogando && listaJogadores[j].pontos < 21) {
+            printf("  [PAROU]");
+        }
+
+        puts("");
+    }
+}
+
 void ordenaJogadores(jogador* listaJogadores, int qntJogadores) {
     // ordena todos os jogadores utilizando o bubble sort
     // Os jogadores com mais de 21 pontos são jogados para o final do array
     // para que sejam mostrados por ultimo no terminal
+
     
     jogador aux;
     for(int ult = qntJogadores - 1; ult > 0; ult--) {
         for (int i=0; i < ult; i++) {
-            if (listaJogadores[i].pontos < listaJogadores[i+1].pontos && listaJogadores[i].pontos > 21) {
+            if (listaJogadores[i].pontos < listaJogadores[i+1].pontos) {
                 aux = listaJogadores[i];
                 listaJogadores[i] = listaJogadores[i+1];
                 listaJogadores[i+1] = aux;
             }
         }
+    }
+
+    int j=0, cont=0;
+	jogador v2[qntJogadores];
+    jogador v3[qntJogadores];
+
+    for (int i=0; i<qntJogadores; i++){
+		if (listaJogadores[i].pontos > 21){
+			v2[cont]=listaJogadores[i];
+			cont++;
+		}
+		else {
+			v3[j]=listaJogadores[i];
+			j++;
+		}
+	}
+
+    for (int i=0; i<cont; i++){
+		v3[j]=v2[i];
+		j++;
+	}
+
+    for (int i = 0; i < qntJogadores; i++) {
+        listaJogadores[i] = v3[i];
     }
 }
 
@@ -115,24 +189,7 @@ bool verificarGameOver(jogador* listaJogadores, int qntJogadores) {
     return false;
 }
 
-void printJogadores(jogador* listaJogadores, int qntJogadores) {
-    // mostra os jogadores na tela
-    // se o jogador fez mais de 21 pontos, será mostrado seu status de perdedor
 
-    for (int j = 0; j < qntJogadores; j++) {
-        printf("%s: ", listaJogadores[j].nome);
-        printList(listaJogadores[j].cartas);
-        printf("  Pontos --> %d", listaJogadores[j].pontos);
-        // mostrar status de perdedor
-        if (!listaJogadores[j].jogando && listaJogadores[j].pontos > 21) {
-            printf("  [PERDEU]");
-        } else if(!listaJogadores[j].jogando && listaJogadores[j].pontos < 21) {
-            printf("  [PAROU]");
-        }
-
-        puts("");
-    }
-}
 
 pilhaDeCarta* constroiBaralho() {
     char template[] = { 'A', '2', '3', '4', '5', '6', '7', '8', '9', 'D', 'J', 'Q', 'K' };
@@ -156,9 +213,6 @@ pilhaDeCarta* constroiBaralho() {
     }
     return baralho;
 }
-
-
-
 
 int main() {
 
@@ -201,33 +255,31 @@ int main() {
     }
 
     bool gameOver = false;
+    ordenaJogadores(jogadores, qntJogadores);
+    system("clear");
     printJogadores(jogadores, qntJogadores);
     while(!gameOver) {
 
-        // ordenar jogadores
-        ordenaJogadores(jogadores, qntJogadores);
-
         // oferecer carta para cada jogador
         pedeCarta(jogadores, qntJogadores, baralho);
+
+        // ordenar jogadores
+        ordenaJogadores(jogadores, qntJogadores);
 
         // verificar se algum jogador esta fora, se sim remove-lo do jogo
         verificarJogadores(jogadores, qntJogadores);
         
         // display jogadores (printJogadores)
+        system("clear");
         printJogadores(jogadores, qntJogadores);
 
         // verificar se todos os jogadores saíram ou se alguém fez 21 -> gameOver
         if (verificarGameOver(jogadores, qntJogadores)) {
             gameOver = !gameOver;
-            // displayGanhador();
+            displayGanhador(jogadores, qntJogadores);
         }
+
     }
-
-    // exibir estado final da partida
-    
-    // registrar partida em arquivo
-
-    // perguntar se quer jogar novamente
 
     return 0;
 }
