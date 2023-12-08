@@ -297,7 +297,8 @@ void gravarNoArquivo(jogador j){
         printf("Erro ao abrir o arquivo\n");
         exit(1);
     }
-    fprintf(f, "%s %d ", j.nome, j.pontos);
+    fprintf(f, "%s\n", j.nome);
+    fprintf(f, "%d ", j.pontos);
     fprintf(f, "%d %d %d ", reg_data_hora -> tm_mday, reg_data_hora -> tm_mon + 1, reg_data_hora -> tm_year - 100);
     fprintf(f, "%d %d %d\n", reg_data_hora -> tm_hour - 3, reg_data_hora -> tm_min, reg_data_hora -> tm_sec);
     fclose(f);
